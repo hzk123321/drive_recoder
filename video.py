@@ -1,4 +1,6 @@
+import shutil
 import cv2
+import os
 import datetime
  
 camera = cv2.VideoCapture(0)                               # カメラCh.(ここでは0)を指定
@@ -12,7 +14,19 @@ print(fps)
  
 while True:
     dt_now = datetime.datetime.now()
-    video_name = dt_now.strftime('%Y%m%d%H%M%S') + ".mp4"
+
+    # 古い動画の削除
+    yesterday = dt_now - datetime.timedelta(days=1)
+    try:
+        shutil.rmtree(yesterday.strftime('%Y%m%d'))
+    except OSError as e:
+        print("NONONO")    
+
+    folder_name = dt_now.strftime('%Y%m%d')
+    if not os.path.isdir(folder_name):
+        os.mkdir(folder_name)
+
+    video_name = folder_name + "/" + dt_now.strftime('%Y%m%d%H%M%S') + ".mp4"
     print(video_name)
 
     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')        # 動画保存時のfourcc設定（mp4用）
