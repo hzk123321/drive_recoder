@@ -107,36 +107,37 @@ def video_recode():
     h = camera.get( cv2.CAP_PROP_FRAME_HEIGHT )
     fps = int(camera.get(cv2.CAP_PROP_FPS))
 
-    dt_now = datetime.datetime.now()
-
-    #古い動画の削除
-    yesterday = dt_now - datetime.timedelta(days=1)
-    try:
-        shutil.rmtree(yesterday.strftime('%Y%m%d'))
-    except OSError as e:
-        print("NONONO")    
-
-    #フォルダの作成
-    folder_name = dt_now.strftime('%Y%m%d')
-    if not os.path.isdir(folder_name):
-        os.mkdir(folder_name)
-    
-    video_name = folder_name + "/" + dt_now.strftime('%Y%m%d%H%M%S') + ".mp4"
-    print(video_name)
-
-    #動画ファイルの保存
-    fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')        # 動画保存時のfourcc設定（mp4用）
-    video = cv2.VideoWriter(video_name, fourcc, fps, (int(w), int(h)))  # 動画の仕様（ファイル名、fourcc, FPS, サイズ）
-
-    #動画の保存処理
-    count = 0
     while True :
-        _, frame = camera.read()
-        video.write(frame)                                     # 動画を1フレームずつ保存する
+        dt_now = datetime.datetime.now()
 
-        count = count + 1
-        if count == (fps * 10):
-            break
+        #古い動画の削除
+        yesterday = dt_now - datetime.timedelta(days=1)
+        try:
+            shutil.rmtree(yesterday.strftime('%Y%m%d'))
+        except OSError as e:
+            print("NONONO")    
+
+        #フォルダの作成
+        folder_name = dt_now.strftime('%Y%m%d')
+        if not os.path.isdir(folder_name):
+            os.mkdir(folder_name)
+    
+        video_name = folder_name + "/" + dt_now.strftime('%Y%m%d%H%M%S') + ".mp4"
+        print(video_name)
+
+        #動画ファイルの保存
+        fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')        # 動画保存時のfourcc設定（mp4用）
+        video = cv2.VideoWriter(video_name, fourcc, fps, (int(w), int(h)))  # 動画の仕様（ファイル名、fourcc, FPS, サイズ）
+
+        #動画の保存処理
+        count = 0
+        while True :
+            _, frame = camera.read()
+            video.write(frame)                                     # 動画を1フレームずつ保存する
+
+            count = count + 1
+            if count == (fps * 10):
+                break
 
 def main():
     root = tk.Tk()
