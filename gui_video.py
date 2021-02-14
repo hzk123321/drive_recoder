@@ -99,6 +99,7 @@ class Application(tk.Frame):
     def press_close_button(self):
         self.master.destroy()
         self.vcap.release()
+        threading.Thread(target=video_recode).join()
 
 def video_recode():
     #ビデオ入力取得（applicationクラスでなんとかならないか。。。）
@@ -107,7 +108,7 @@ def video_recode():
     h = camera.get( cv2.CAP_PROP_FRAME_HEIGHT )
     fps = int(camera.get(cv2.CAP_PROP_FPS))
 
-    while True :
+    while True:
         dt_now = datetime.datetime.now()
 
         #古い動画の削除
@@ -132,11 +133,12 @@ def video_recode():
         #動画の保存処理
         count = 0
         while True :
-            _, frame = camera.read()
-            video.write(frame)                                     # 動画を1フレームずつ保存する
+            if (count % 200) == 0:
+                _, frame = camera.read()
+                video.write(frame)                                     # 動画を1フレームずつ保存する
 
             count = count + 1
-            if count == (fps * 10):
+            if count == (fps * 1000):
                 break
 
 def main():
